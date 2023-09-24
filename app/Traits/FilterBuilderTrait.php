@@ -12,10 +12,8 @@ trait FilterBuilderTrait
     protected function setFilter($param, $field, $ope, $defValue = null)
     {
         $value = $param[$field] ?? $defValue;
-        if ($value != '' || $value !== null)
-        {
-            if (strtoupper($ope) == 'LIKE')
-            {
+        if ($value != '' || $value !== null) {
+            if (strtoupper($ope) == 'LIKE') {
                 $value = '%' . trim($value) . '%';
             }
             $this->filter[] = [$field, $ope, trim($value)];
