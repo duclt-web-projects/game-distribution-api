@@ -30,3 +30,17 @@ Route::group([
         Route::get('profile', 'UserController@profile');
     });
 });
+
+Route::prefix('/games')->group(function () {
+    Route::get('/', 'GameController@index');
+    Route::get('/list', 'GameController@list');
+    Route::get('/promo-feature', 'GameController@promoFeature');
+    Route::get('/promo-list', 'GameController@promoList');
+    Route::get('/{slug}', 'GameController@detail');
+    Route::get('/user/{id}', 'GameController@listByUser');
+    Route::group(['middleware' => 'jwt.verify'], function () {
+        Route::post('/store', 'GameController@store');
+        Route::post('/edit/{id}', 'GameController@edit');
+        Route::delete('/{id}', 'GameController@delete');
+    });
+});

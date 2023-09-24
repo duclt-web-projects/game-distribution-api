@@ -188,3 +188,30 @@ if (!function_exists('get_data_user')) {
         return Auth::guard($type)->user() ? Auth::guard($type)->user()->$field : '';
     }
 }
+
+if (!function_exists('extract_zip_to_tree_structure')) {
+    function extract_zip_to_tree_structure($zip)
+    {
+        $tree  = array(); //empty arrays
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $path = $zip->getNameIndex($i);
+            $pathBySlash = array_values(explode('/', $path));
+            $c = count($pathBySlash);
+            $temp = &$tree;
+            for ($j = 0; $j < $c - 1; $j++)
+                if (isset($temp[$pathBySlash[$j]]))
+                    $temp = &$temp[$pathBySlash[$j]];
+                else {
+                    $temp[$pathBySlash[$j]] = array();
+                    $temp = &$temp[$pathBySlash[$j]];
+                }
+            if (substr($path, -1) == '/')
+                $temp[$pathBySlash[$c - 1]] = array();
+            else
+                $temp[] = $pathBySlash[$c - 1];
+        }
+
+        return $tree;
+    }
+}
