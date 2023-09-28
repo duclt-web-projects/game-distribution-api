@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\TokenStatus;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,7 @@ class UserController extends BaseController
         $credentials = $request->only('email', 'password');
 
         $token = Auth::guard('api')->attempt($credentials);
+
         if (!$token) {
             return response()->json([
                 'message' => 'Unauthorized',
@@ -36,9 +38,8 @@ class UserController extends BaseController
         $user = Auth::guard('api')->user();
 
         return response()->json([
-            'access_token' => $token,
-            'type_token' => 'bearer',
             'user' => $user,
+            'access_token' => $token,
             'message' => 'Login successful',
         ]);
     }
@@ -67,10 +68,9 @@ class UserController extends BaseController
         $token = Auth::guard('api')->login($user);
 
         return response()->json([
-            'message' => 'User created successfully',
             'user' => $user,
             'access_token' => $token,
-            'type_token' => 'bearer',
+            'message' => 'User created successfully',
         ]);
     }
 
@@ -84,11 +84,16 @@ class UserController extends BaseController
 
     public function refresh()
     {
-        return response()->json([
-            'user' => Auth::user(),
-            'access_token' => Auth::guard('api')->refresh(),
-            'type_token' => 'bearer',
-        ]);
+        try {
+            return response()->json([
+                'access_token' => Auth::guard('api')->refresh()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Token is Expired. Please login again!!!',
+                'status' => TokenStatus::NOT_REFRESH
+            ], 401);
+        }
     }
 
     /**

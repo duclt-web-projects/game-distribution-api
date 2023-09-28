@@ -97,6 +97,7 @@ class GameService extends BaseService
         $gameData['source_link'] = $path . $gameFileNameToken[0] . '/index.html';
 
         $game = $this->model->create($gameData);
+        $game->update(['slug' => Str::slug($data['name'] . ' ' . $game->id)]);
 
         return $game;
     }
