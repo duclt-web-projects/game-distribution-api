@@ -12,8 +12,8 @@ class BaseController extends Controller
 {
     use FilterBuilderTrait;
     protected $service;
-    protected int $limit = 0;
-    protected int $perPage = 10;
+    protected $limit = 0;
+    protected $perPage = 10;
 
     /**
      * @param Request $request
