@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\GameConst;
 use App\Models\Game;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
@@ -148,7 +149,22 @@ class GameService extends BaseService
             return response()->json(['message' => "Not found"], 404);
         }
 
+        $data['updated_at'] = now();
+
         $game->fill($data)->save();
+
+        return $game;
+    }
+
+    public function changeStatus(string $id)
+    {
+        $game = $this->model->find($id);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $game->fill(['status' => $game->status === GameConst::ACTIVE ? GameConst::INACTIVE : GameConst::ACTIVE])->save();
 
         return $game;
     }

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             CategoryGameSeeder::class,
             GameTagSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

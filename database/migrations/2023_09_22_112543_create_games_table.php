@@ -17,7 +17,7 @@ class CreateGamesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->tinyInteger('active')->default(1);
+            $table->tinyInteger('status')->default(1)->index();
             $table->integer('width')->default(1000);
             $table->integer('height')->default(1000);
             $table->string('source_link')->nullable();

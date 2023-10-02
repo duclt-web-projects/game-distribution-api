@@ -18,6 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// ====================== Authentication ======================
 Route::group([
     'prefix' => 'auth'
 ], function ($router) {
@@ -31,16 +32,41 @@ Route::group([
     });
 });
 
-Route::prefix('/games')->group(function () {
+// ====================== Games ======================
+Route::group(['prefix' => '/games'], function () {
     Route::get('/', 'GameController@index');
     Route::get('/list', 'GameController@list');
     Route::get('/promo-feature', 'GameController@promoFeature');
     Route::get('/promo-list', 'GameController@promoList');
-    Route::get('/{slug}', 'GameController@detail');
-    Route::get('/user/{id}', 'GameController@listByUser');
+
+    Route::group(['middleware' => 'jwt.verify'], function () {
+        Route::get('/user/{id}', 'GameController@listByUser');
+    });
+});
+
+Route::group(['prefix' => 'game'], function () {
+    Route::get('/{id}', 'GameController@show');
+
     Route::group(['middleware' => 'jwt.verify'], function () {
         Route::post('/store', 'GameController@store');
         Route::post('/edit/{id}', 'GameController@edit');
-        Route::delete('/{id}', 'GameController@delete');
+        Route::post('/status/{id}', 'GameController@changeStatus');
+    });
+});
+
+// ====================== Categories ======================
+Route::group(['prefix' => '/categories'], function () {
+    Route::get('/', 'CategoryController@index');
+    Route::get('/list', 'CategoryController@list');
+    Route::get('/{slug}', 'CategoryController@detail');
+});
+
+Route::group(['prefix' => 'category'], function () {
+    Route::get('/{id}', 'CategoryController@show');
+
+    Route::group(['middleware' => 'jwt.verify'], function () {
+        Route::post('/store', 'CategoryController@store');
+        Route::post('/edit/{id}', 'CategoryController@edit');
+        Route::post('/status/{id}', 'CategoryController@changeStatus');
     });
 });

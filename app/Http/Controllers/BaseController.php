@@ -45,22 +45,4 @@ class BaseController extends Controller
 
         return response()->json(['message' => 'No Content'], 204);
     }
-
-    /**
-     * @param Request $request
-     * @return int
-     */
-    public function getLimitFromRequest(Request $request): int
-    {
-        return (int) $request->get('limit') ?? $this->limit;
-    }
-
-    /**
-     * @param Request $request
-     * @return int
-     */
-    public function getPaginateFromRequest(Request $request): int
-    {
-        return (int) $request->get('perPage') ?? $this->perPage;
-    }
 }
