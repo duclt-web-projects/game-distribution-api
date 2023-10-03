@@ -68,6 +68,7 @@ class GameController extends BaseController
             'height' => 'required|numeric',
             'thumbnail' => 'required|file|mimes:jpg,png,jpeg',
             'gameFile' => 'required|file|mimes:zip|max:10240',
+            'category' => 'required',
         ];
 
         $errors = $this->validate($request, $rules);

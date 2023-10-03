@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Constants\GameConst;
 use App\Models\Game;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use RecursiveDirectoryIterator;
@@ -112,7 +113,22 @@ class GameService extends BaseService
         $game = $this->model->create($gameData);
         $game->update(['slug' => Str::slug($data['name'] . ' ' . $game->id)]);
 
-        return $game;
+        $categories = json_decode($data['category'], 1);
+
+        $gameCategories = [];
+
+        foreach ($categories as $category) {
+            $gameCategories[] = [
+                'game_id' => $game->id,
+                'category_id' => $category,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        DB::table('category_games')->insert($gameCategories);
+
+        return $game->load('categories', 'tags');
     }
 
     function Zip($source, $destination)
@@ -162,6 +178,7 @@ class GameService extends BaseService
         }
 
         $data['updated_at'] = now();
+        unset($data['category']);
 
         $game->fill($data)->save();
 
