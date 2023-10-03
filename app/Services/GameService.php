@@ -25,7 +25,19 @@ class GameService extends BaseService
 
     public function list($filter)
     {
-        return $this->getAll($filter, [], 4);
+        $query = $this->model;
+
+        if($filter['name']) {
+            $query = $query->where('name', 'LIKE', '%'. $filter['name']. '%');
+        }
+
+        if($filter['categories']) {
+            $query = $query->whereHas('categories', function ($q) use ($filter) {
+                $q->whereIn('categories.id', $filter['categories']);
+            });
+        }
+
+        return  $query->paginate(4);
     }
 
     public function detail($id)

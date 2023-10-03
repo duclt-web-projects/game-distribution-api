@@ -20,8 +20,10 @@ class GameController extends BaseController
 
     public function list(Request $request)
     {
-        $this->setFilter($request, 'name', 'LIKE');
-        $filter = $this->getFilter();
+        $filter = [
+            'name' => $request->get('name') ?? '',
+            'categories' => $request->get('categories') ? explode(',', $request->get('categories')) : []
+        ];
         return $this->service->list($filter);
     }
 
