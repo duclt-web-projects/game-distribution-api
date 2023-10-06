@@ -2,23 +2,23 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class UserService extends BaseService
+class AdminService extends BaseService
 {
     public function __construct()
     {
-        $this->model = new User();
+        $this->model = new Admin();
     }
 
     public function register(Request $request)
     {
-        $existUser = $this->findBy([['email', '=', $request->get("email")]]);
-        if ($existUser) return null;
+        $existAdmin = $this->findBy([['email', '=', $request->get("email")]]);
+        if ($existAdmin) return null;
 
-        $user = $this->model->create([
+        $admin = $this->model->create([
             'name' => $request->get("name"),
             'email' => $request->get("email"),
             'password' => Hash::make($request->get("password")),
@@ -26,6 +26,6 @@ class UserService extends BaseService
             'updated_at' => now(),
         ]);
 
-        return $user->refresh();
+        return $admin->refresh();
     }
 }

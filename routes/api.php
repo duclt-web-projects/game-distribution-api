@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// ====================== Authentication ======================
+// ====================== User Authentication ======================
 Route::group([
     'prefix' => 'auth'
 ], function ($router) {
@@ -33,8 +33,8 @@ Route::group([
 });
 
 // ====================== Games ======================
-Route::group(['prefix' => '/games'], function () {
-    Route::get('/', 'GameController@index');
+Route::group(['prefix' => 'games'], function () {
+    Route::get('', 'GameController@index');
     Route::get('/list', 'GameController@list');
     Route::get('/promo-feature', 'GameController@promoFeature');
     Route::get('/promo-list', 'GameController@promoList');
@@ -55,8 +55,8 @@ Route::group(['prefix' => 'game'], function () {
 });
 
 // ====================== Categories ======================
-Route::group(['prefix' => '/categories'], function () {
-    Route::get('/', 'CategoryController@index');
+Route::group(['prefix' => 'categories'], function () {
+    Route::get('', 'CategoryController@index');
     Route::get('/list', 'CategoryController@list');
     Route::get('/{slug}', 'CategoryController@detail');
 });
