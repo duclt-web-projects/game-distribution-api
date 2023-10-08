@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // ====================== Admin Authentication ======================
+
 Route::group([
     'prefix' => 'auth'
 ], function ($router) {
@@ -26,5 +27,16 @@ Route::group([
         Route::get('logout', 'AdminController@logout');
         Route::get('refresh', 'AdminController@refresh');
         Route::get('profile', 'AdminController@profile');
+    });
+});
+
+// ====================== Admin Games ======================
+Route::group(['middleware' => ['jwt.verify']], function () {
+    Route::group(['prefix' => 'games'], function () {
+        Route::get('/list', 'AdminGameController@list');
+    });
+
+    Route::group(['prefix' => 'game'], function () {
+        Route::post('/change-status/{id}', 'AdminGameController@changeStatus');
     });
 });

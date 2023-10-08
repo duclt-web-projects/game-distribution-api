@@ -28,11 +28,11 @@ class GameService extends BaseService
     {
         $query = $this->model;
 
-        if($filter['name']) {
-            $query = $query->where('name', 'LIKE', '%'. $filter['name']. '%');
+        if ($filter['name']) {
+            $query = $query->where('name', 'LIKE', '%' . $filter['name'] . '%');
         }
 
-        if($filter['categories']) {
+        if ($filter['categories']) {
             $query = $query->whereHas('categories', function ($q) use ($filter) {
                 $q->whereIn('categories.id', $filter['categories']);
             });

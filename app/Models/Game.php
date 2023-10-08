@@ -23,4 +23,9 @@ class Game extends BaseModel
     {
         return $this->belongsToMany(Tag::class, GameTag::class, 'game_id', 'tag_id');
     }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
 }
