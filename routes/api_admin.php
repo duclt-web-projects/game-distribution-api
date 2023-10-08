@@ -22,21 +22,35 @@ Route::group([
     Route::get('test', 'AdminController@test');
     Route::post('login', 'AdminController@login');
     Route::post('register', 'AdminController@register');
+});
 
-    Route::group(['middleware' => 'jwt.verify'], function () {
+// ====================== Middleware ======================
+Route::group(['middleware' => ['jwt.verify']], function () {
+    // ====================== Auth ======================
+    Route::group(['prefix' => 'auth'], function () {
         Route::get('logout', 'AdminController@logout');
         Route::get('refresh', 'AdminController@refresh');
         Route::get('profile', 'AdminController@profile');
     });
-});
 
-// ====================== Admin Games ======================
-Route::group(['middleware' => ['jwt.verify']], function () {
+    // ====================== Games ======================
     Route::group(['prefix' => 'games'], function () {
         Route::get('/list', 'AdminGameController@list');
     });
 
     Route::group(['prefix' => 'game'], function () {
         Route::post('/change-status/{id}', 'AdminGameController@changeStatus');
+    });
+
+    // ====================== Categories ======================
+    Route::group(['prefix' => 'categories'], function () {
+        Route::get('/list', 'AdminCategoryController@list');
+    });
+
+    Route::group(['prefix' => 'category'], function () {
+        Route::post('/store', 'AdminCategoryController@store');
+        Route::post('/edit/{id}', 'AdminCategoryController@edit');
+        Route::post('/change-status/{id}', 'AdminCategoryController@changeStatus');
+        Route::get('/{id}', 'AdminCategoryController@show');
     });
 });

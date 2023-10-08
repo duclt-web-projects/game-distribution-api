@@ -60,13 +60,3 @@ Route::group(['prefix' => 'categories'], function () {
     Route::get('/list', 'CategoryController@list');
     Route::get('/{slug}', 'CategoryController@detail');
 });
-
-Route::group(['prefix' => 'category'], function () {
-    Route::get('/{id}', 'CategoryController@show');
-
-    Route::group(['middleware' => 'jwt.verify'], function () {
-        Route::post('/store', 'CategoryController@store');
-        Route::post('/edit/{id}', 'CategoryController@edit');
-        Route::post('/status/{id}', 'CategoryController@changeStatus');
-    });
-});
