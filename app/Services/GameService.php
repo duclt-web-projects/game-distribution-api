@@ -92,8 +92,9 @@ class GameService extends BaseService
 
         $gameFile = $data['gameFile'];
         $gameFileNameToken = explode('.', $gameFile['name']);
-        $path = 'games/';
-        $location = $path . $gameFile['name'];
+        $path = 'games/' . $gameFileNameToken[0];
+        $location = 'games/' . $gameFile['name'];
+        $fileDefault = 'index.html';
 
         if (!File::exists($path)) {
             mkdir($path, 0777, true);
@@ -101,14 +102,47 @@ class GameService extends BaseService
 
         if (move_uploaded_file($gameFile['tmp_name'], $location)) {
             $zip = new ZipArchive();
+            $checkExist = false;
 
             if ($zip->open($location)) {
-                $zip->extractTo($path);
-                $zip->close();
+                // Loop through the files in the ZIP archive
+                for ($i = 0; $i < $zip->numFiles; $i++) {
+                    $filename = $zip->getNameIndex($i);
+
+                    // Check if the filename matches the one you're looking for
+                    if ($filename === $fileDefault) {
+                        $checkExist = true;
+                        break;
+                    }
+                }
+
+                if ($checkExist) {
+                    $zip->extractTo($path);
+                    $zip->close();
+                } else {
+                    return response()->json(['message' => 'No index.html file'], 400);
+                }
+            } else {
+                return response()->json(['message' => 'Failed to extract ZIP file.'], 500);
             }
+
+            $cssFilePath = '/css/game.css';
+            $indexFilePath = $path . '/index.html';
+
+            // Read the index.html file
+            $htmlContent = file_get_contents($indexFilePath);
+
+            // Generate the CSS link tag
+            $cssLink = '<link rel="stylesheet" type="text/css" href="' . $cssFilePath . '">';
+
+            // Find the closing </head> tag and insert the CSS link before it
+            $htmlContent = preg_replace('/<\/head>/', $cssLink . '</head>', $htmlContent, 1);
+
+            // Save the modified HTML content back to the index.html file
+            file_put_contents($indexFilePath, $htmlContent);
         }
 
-        $gameData['source_link'] = $path . $gameFileNameToken[0] . '/index.html';
+        $gameData['source_link'] = $indexFilePath;
 
         $game = $this->model->create($gameData);
         $game->update(['slug' => Str::slug($data['name'] . ' ' . $game->id)]);
@@ -129,44 +163,6 @@ class GameService extends BaseService
         DB::table('category_games')->insert($gameCategories);
 
         return $game->load('categories', 'tags');
-    }
-
-    function Zip($source, $destination)
-    {
-        if (!extension_loaded('zip') || !file_exists($source)) {
-            return false;
-        }
-
-        $zip = new ZipArchive();
-        if (!$zip->open($destination, ZIPARCHIVE::CREATE)) {
-            return false;
-        }
-
-        $source = str_replace('\\', '/', realpath($source));
-
-        if (is_dir($source) === true) {
-            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
-
-            foreach ($files as $file) {
-                $file = str_replace('\\', '/', $file);
-
-                // Ignore "." and ".." folders
-                if (in_array(substr($file, strrpos($file, '/') + 1), array('.', '..')))
-                    continue;
-
-                $file = realpath($file);
-
-                if (is_dir($file) === true) {
-                    $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
-                } else if (is_file($file) === true) {
-                    $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
-                }
-            }
-        } else if (is_file($source) === true) {
-            $zip->addFromString(basename($source), file_get_contents($source));
-        }
-
-        return $zip->close();
     }
 
     public function edit(string $id, array $data)
