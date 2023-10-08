@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Constants\GameConst;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,6 +30,7 @@ class GameSeeder extends Seeder
                 'id' => $key + 1,
                 'name' => $game->name,
                 'slug' => Str::slug($game->name) . '-' . ($key + 1),
+                'status' => GameConst::ACCEPTED,
                 'width' => $game->width,
                 'height' => $game->height,
                 'source_link' => 'games/' . $game->file_game . '/index.html',

@@ -8,8 +8,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use ZipArchive;
 
 class GameService extends BaseService
@@ -21,12 +19,12 @@ class GameService extends BaseService
 
     public function index(): Collection
     {
-        return $this->getAll();
+        return $this->getAll([['status', '=', GameConst::ACCEPTED]]);
     }
 
     public function list($filter)
     {
-        $query = $this->model;
+        $query = $this->model->where('status', GameConst::ACCEPTED);
 
         if ($filter['name']) {
             $query = $query->where('name', 'LIKE', '%' . $filter['name'] . '%');
@@ -51,7 +49,7 @@ class GameService extends BaseService
 
     public function promoFeature(): array
     {
-        $games = $this->model->withoutGlobalScopes()->limit(4)->get();
+        $games = $this->model->withoutGlobalScopes()->where('status', GameConst::ACCEPTED)->limit(4)->get();
         $hotGame = $games[0];
         $featureGame = $games->slice(1);
         return [
@@ -62,7 +60,7 @@ class GameService extends BaseService
 
     public function promoList(): Collection
     {
-        return $this->model->limit(6)->get();
+        return $this->model->where('status', GameConst::ACCEPTED)->limit(6)->get();
     }
 
     public function listByUser(string $userId)
