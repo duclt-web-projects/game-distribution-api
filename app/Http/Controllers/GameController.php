@@ -27,6 +27,14 @@ class GameController extends BaseController
         return $this->service->list($filter);
     }
 
+    public function featuredList(Request $request)
+    {
+        $order = [
+            'type' => $request->get('type'),
+        ];
+        return $this->service->featuredList($order);
+    }
+
     public function detail(string $slug)
     {
         $token = explode('-', $slug);

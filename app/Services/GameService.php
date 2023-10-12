@@ -39,6 +39,17 @@ class GameService extends BaseService
         return  $query->paginate(4);
     }
 
+    public function featuredList($order)
+    {
+        $query = $this->model->where('status', GameConst::ACCEPTED);
+
+        if ($order['type']) {
+            $query = $query->orderBy($order['type'], 'desc');
+        }
+
+        return  $query->limit(7)->get();
+    }
+
     public function detail($id)
     {
         $game = $this->model->with(['categories:name,slug', 'tags:name,slug'])->find($id);
