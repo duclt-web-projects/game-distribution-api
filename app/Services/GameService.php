@@ -124,17 +124,17 @@ class GameService extends BaseService
                 return response()->json(['message' => 'Failed to extract ZIP file.'], 500);
             }
 
-            $cssFilePath = '/css/game.css';
+            $jsFilePath = '/assets/js/game.js';
             $indexFilePath = $path . '/index.html';
 
             // Read the index.html file
             $htmlContent = file_get_contents($indexFilePath);
 
             // Generate the CSS link tag
-            $cssLink = '<link rel="stylesheet" type="text/css" href="' . $cssFilePath . '">';
+            $scriptTag = '<script src="' . $jsFilePath . '"></script>';
 
             // Find the closing </head> tag and insert the CSS link before it
-            $htmlContent = preg_replace('/<\/head>/', $cssLink . '</head>', $htmlContent, 1);
+            $htmlContent = str_replace('</body>', $scriptTag . '</body>', $htmlContent);
 
             // Save the modified HTML content back to the index.html file
             file_put_contents($indexFilePath, $htmlContent);
