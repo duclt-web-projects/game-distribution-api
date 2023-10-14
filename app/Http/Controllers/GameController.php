@@ -112,4 +112,10 @@ class GameController extends BaseController
     {
         return $this->service->changeStatus($id);
     }
+
+    public function uploadImage()
+    {
+        return response()->json($this->service->uploadImage());
+    }
+
 }

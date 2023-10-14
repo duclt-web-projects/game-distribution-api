@@ -202,4 +202,15 @@ class GameService extends BaseService
 
         return $game;
     }
+
+    public function uploadImage()
+    {
+        $fileUpload = upload_image('upload', 'games');
+
+        if (isset($fileUpload['name'])) {
+            return pare_url_file($fileUpload['name'], 'games');
+        }
+
+        return '/no-image.png';
+    }
 }

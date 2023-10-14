@@ -47,6 +47,7 @@ Route::group(['prefix' => 'games'], function () {
 
 Route::group(['prefix' => 'game'], function () {
     Route::get('/{id}', 'GameController@detail');
+    Route::post('/upload-image', 'GameController@uploadImage');
 
     Route::group(['middleware' => 'jwt.verify'], function () {
         Route::post('/store', 'GameController@store');

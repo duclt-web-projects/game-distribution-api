@@ -9,7 +9,7 @@ function resizeGame() {
     const unityContainer = document.querySelector("#unity-container");
 
     if (unityContainer) {
-        unityContainer.style.cssText = "height:100%; width:100%;"
+        unityContainer.style.cssText = "height:100%; width:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;"
     }
 }
 
