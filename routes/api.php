@@ -47,12 +47,14 @@ Route::group(['prefix' => 'games'], function () {
 
 Route::group(['prefix' => 'game'], function () {
     Route::get('/{id}', 'GameController@detail');
-    Route::post('/upload-image', 'GameController@uploadImage');
+
 
     Route::group(['middleware' => 'jwt.verify'], function () {
         Route::post('/store', 'GameController@store');
         Route::post('/edit/{id}', 'GameController@edit');
         Route::post('/status/{id}', 'GameController@changeStatus');
+        Route::post('/upload-thumbnail/{id}', 'GameController@uploadThumbnail');
+        Route::post('/upload-game/{id}', 'GameController@uploadGame');
     });
 });
 

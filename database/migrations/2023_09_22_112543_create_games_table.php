@@ -16,11 +16,11 @@ class CreateGamesTable extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->nullable();
             $table->tinyInteger('status')->default(0)->index();
             $table->tinyInteger('active')->default(0)->index();
-            $table->integer('width')->default(1000);
-            $table->integer('height')->default(1000);
+            $table->integer('width')->default(600);
+            $table->integer('height')->default(800);
             $table->string('source_link')->nullable();
             $table->integer('author_id')->default(1);
             $table->integer('play_times')->default(0);

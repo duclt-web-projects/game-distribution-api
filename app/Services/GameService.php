@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Constants\GameConst;
 use App\Models\Game;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use ZipArchive;
@@ -36,7 +35,7 @@ class GameService extends BaseService
             });
         }
 
-        return  $query->paginate(4);
+        return $query->paginate(4);
     }
 
     public function featuredList($order)
@@ -47,7 +46,7 @@ class GameService extends BaseService
             $query = $query->orderBy($order['type'], 'desc');
         }
 
-        return  $query->limit(7)->get();
+        return $query->limit(7)->get();
     }
 
     public function detail($id)
@@ -83,23 +82,73 @@ class GameService extends BaseService
     {
         $gameData = [
             'name' => $data['name'],
-            'slug' => Str::slug($data['name']),
             'author_id' => auth()->user()->id ?? 1,
-            'description' => $data['description'] ?? '',
-            'width' => $data['width'],
-            'height' => $data['height'],
-            'published_at' => now(),
             'created_at' => now(),
             'updated_at' => now(),
         ];
 
-        $fileUpload = upload_image('thumbnail');
+        $game = $this->model->create($gameData);
+        $game->update(['slug' => Str::slug($data['name'] . ' ' . $game->id)]);
 
-        if (isset($fileUpload['name'])) {
-            $gameData['thumbnail'] = pare_url_file($fileUpload['name']);
+        return $game;
+    }
+
+    public function edit(string $id, array $data)
+    {
+        $game = $this->model->find($id);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
         }
 
-        $gameFile = $data['gameFile'];
+        $data['updated_at'] = now();
+        unset($data['category']);
+
+        $game->fill($data)->save();
+
+        return $game;
+    }
+
+    public function changeStatus(string $id)
+    {
+        $game = $this->model->find($id);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $game->fill(['status' => $game->status === GameConst::ACTIVE ? GameConst::INACTIVE : GameConst::ACTIVE])->save();
+
+        return $game;
+    }
+
+    public function uploadThumbnail(string $id)
+    {
+        $game = $this->model->find($id);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $fileUpload = upload_image('thumbnail', 'thumbnails');
+
+        if (isset($fileUpload['name'])) {
+            $fileName = pare_url_file($fileUpload['name'], 'thumbnails');
+            $game->fill(['thumbnail' => $fileName])->save();
+        }
+
+        return $game;
+    }
+
+    public function uploadGame(string $id)
+    {
+        $game = $this->model->find($id);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $gameFile = $_FILES['gameFile'];
         $gameFileNameToken = explode('.', $gameFile['name']);
         $path = 'games/' . $gameFileNameToken[0];
         $location = 'games/' . $gameFile['name'];
@@ -151,66 +200,8 @@ class GameService extends BaseService
             file_put_contents($indexFilePath, $htmlContent);
         }
 
-        $gameData['source_link'] = $indexFilePath;
-
-        $game = $this->model->create($gameData);
-        $game->update(['slug' => Str::slug($data['name'] . ' ' . $game->id)]);
-
-        $categories = json_decode($data['category'], 1);
-
-        $gameCategories = [];
-
-        foreach ($categories as $category) {
-            $gameCategories[] = [
-                'game_id' => $game->id,
-                'category_id' => $category,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        DB::table('category_games')->insert($gameCategories);
-
-        return $game->load('categories', 'tags');
-    }
-
-    public function edit(string $id, array $data)
-    {
-        $game = $this->model->find($id);
-
-        if (!$game) {
-            return response()->json(['message' => "Not found"], 404);
-        }
-
-        $data['updated_at'] = now();
-        unset($data['category']);
-
-        $game->fill($data)->save();
+        $game->fill(['source_link' => $indexFilePath])->save();
 
         return $game;
-    }
-
-    public function changeStatus(string $id)
-    {
-        $game = $this->model->find($id);
-
-        if (!$game) {
-            return response()->json(['message' => "Not found"], 404);
-        }
-
-        $game->fill(['status' => $game->status === GameConst::ACTIVE ? GameConst::INACTIVE : GameConst::ACTIVE])->save();
-
-        return $game;
-    }
-
-    public function uploadImage()
-    {
-        $fileUpload = upload_image('upload', 'games');
-
-        if (isset($fileUpload['name'])) {
-            return pare_url_file($fileUpload['name'], 'games');
-        }
-
-        return '/no-image.png';
     }
 }

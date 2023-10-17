@@ -19,7 +19,6 @@ class VerifyJWTToken extends BaseMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-      return $next($request);
         try {
             $user = $this->auth->parseToken()->authenticate();
 

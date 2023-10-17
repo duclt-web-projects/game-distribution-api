@@ -72,11 +72,6 @@ class GameController extends BaseController
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'width' => 'required|numeric',
-            'height' => 'required|numeric',
-            'thumbnail' => 'required|file|mimes:jpg,png,jpeg',
-            'gameFile' => 'required|file|mimes:zip|max:10240',
-            'category' => 'required',
         ];
 
         $errors = $this->validate($request, $rules);
@@ -85,11 +80,7 @@ class GameController extends BaseController
             return $this->handleError($errors);
         }
 
-        $data = $request->except(['thumbnail', 'gameFile']);
-        $data['thumbnail'] = $_FILES['thumbnail'];
-        $data['gameFile'] = $_FILES['gameFile'];
-
-        return $this->service->store($data);
+        return $this->service->store($request->all());
     }
 
     public function edit(string $id, Request $request)
@@ -113,9 +104,13 @@ class GameController extends BaseController
         return $this->service->changeStatus($id);
     }
 
-    public function uploadImage()
+    public function uploadThumbnail(string $id)
     {
-        return response()->json($this->service->uploadImage());
+        return response()->json($this->service->uploadThumbnail($id));
     }
 
+    public function uploadGame(string $id)
+    {
+        return response()->json($this->service->uploadGame($id));
+    }
 }
