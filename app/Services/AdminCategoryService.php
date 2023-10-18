@@ -17,13 +17,13 @@ class AdminCategoryService extends BaseService
 
     public function list(array $filter)
     {
-        $query = $this->categoryModel;
+        $query = $this->categoryModel->withCount('games');
 
         if ($filter['name']) {
             $query = $query->where('name', 'LIKE', '%' . $filter['name'] . '%');
         }
 
-        return  $query->paginate(4);
+        return  $query->paginate(self::LIMIT);
     }
 
     public function show(string $id)

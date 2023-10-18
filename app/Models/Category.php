@@ -17,4 +17,9 @@ class Category extends Model
     {
         return $this->hasMany(CategoryGame::class, 'game_id');
     }
+
+    public function games()
+    {
+        return $this->hasManyThrough(Game::class, CategoryGame::class, 'category_id', 'id', 'id', 'game_id');
+    }
 }

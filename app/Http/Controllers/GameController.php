@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\GameConst;
 use App\Services\GameService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -24,6 +25,7 @@ class GameController extends BaseController
             'name' => $request->get('name') ?? '',
             'categories' => $request->get('categories') ? explode(',', $request->get('categories')) : []
         ];
+
         return $this->service->list($filter);
     }
 
@@ -31,6 +33,7 @@ class GameController extends BaseController
     {
         $order = [
             'type' => $request->get('type'),
+            'limit' => $request->get('limit') ?? 7,
         ];
         return $this->service->featuredList($order);
     }
@@ -106,11 +109,11 @@ class GameController extends BaseController
 
     public function uploadThumbnail(string $id)
     {
-        return response()->json($this->service->uploadThumbnail($id));
+        return $this->service->uploadThumbnail($id);
     }
 
     public function uploadGame(string $id)
     {
-        return response()->json($this->service->uploadGame($id));
+        return $this->service->uploadGame($id);
     }
 }

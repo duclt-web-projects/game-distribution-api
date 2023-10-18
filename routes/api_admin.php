@@ -43,9 +43,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     });
 
     // ====================== Categories ======================
-    Route::group(['prefix' => 'categories'], function () {
-        Route::get('/list', 'AdminCategoryController@list');
-    });
 
     Route::group(['prefix' => 'category'], function () {
         Route::post('/store', 'AdminCategoryController@store');
@@ -53,4 +50,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/change-status/{id}', 'AdminCategoryController@changeStatus');
         Route::get('/{id}', 'AdminCategoryController@show');
     });
+});
+
+Route::group(['prefix' => 'categories'], function () {
+    Route::get('/list', 'AdminCategoryController@list');
 });

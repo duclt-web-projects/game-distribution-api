@@ -23,7 +23,10 @@ class GameService extends BaseService
 
     public function list($filter)
     {
-        $query = $this->model->where('status', GameConst::ACCEPTED);
+        $query = $this->model->where([
+            ['status', '=', GameConst::ACCEPTED],
+            ['active', '=', GameConst::ACTIVE]
+        ]);
 
         if ($filter['name']) {
             $query = $query->where('name', 'LIKE', '%' . $filter['name'] . '%');
@@ -35,18 +38,21 @@ class GameService extends BaseService
             });
         }
 
-        return $query->paginate(4);
+        return $query->paginate(10);
     }
 
-    public function featuredList($order)
+    public function featuredList($data)
     {
-        $query = $this->model->where('status', GameConst::ACCEPTED);
+        $query = $this->model->where([
+            ['status', '=', GameConst::ACCEPTED],
+            ['active', '=', GameConst::ACTIVE]
+        ]);
 
-        if ($order['type']) {
-            $query = $query->orderBy($order['type'], 'desc');
+        if ($data['type']) {
+            $query = $query->orderBy($data['type'], 'desc');
         }
 
-        return $query->limit(7)->get();
+        return $query->limit($data['limit'])->get();
     }
 
     public function detail($id)
@@ -59,9 +65,15 @@ class GameService extends BaseService
 
     public function promoFeature(): array
     {
-        $games = $this->model->withoutGlobalScopes()->where('status', GameConst::ACCEPTED)->limit(4)->get();
+        $games = $this->model->withoutGlobalScopes()
+            ->where([
+                ['status', '=', GameConst::ACCEPTED],
+                ['active', '=', GameConst::ACTIVE]
+            ])->limit(4)->get();
+
         $hotGame = $games[0];
         $featureGame = $games->slice(1);
+
         return [
             'hotGame' => $hotGame,
             'featureGame' => $featureGame,
@@ -70,7 +82,10 @@ class GameService extends BaseService
 
     public function promoList(): Collection
     {
-        return $this->model->where('status', GameConst::ACCEPTED)->limit(6)->get();
+        return $this->model->where([
+            ['status', '=', GameConst::ACCEPTED],
+            ['active', '=', GameConst::ACTIVE]
+        ])->limit(6)->get();
     }
 
     public function listByUser(string $userId)

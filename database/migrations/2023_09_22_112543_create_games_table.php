@@ -18,7 +18,7 @@ class CreateGamesTable extends Migration
             $table->string('name');
             $table->string('slug')->nullable();
             $table->tinyInteger('status')->default(0)->index();
-            $table->tinyInteger('active')->default(0)->index();
+            $table->tinyInteger('active')->default(1)->index();
             $table->integer('width')->default(600);
             $table->integer('height')->default(800);
             $table->string('source_link')->nullable();
@@ -32,6 +32,8 @@ class CreateGamesTable extends Migration
             $table->string('video')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
+
+            $table->index(['status', 'active']);
         });
     }
 
