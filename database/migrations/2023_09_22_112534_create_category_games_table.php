@@ -17,7 +17,6 @@ class CreateCategoryGamesTable extends Migration
             $table->id();
             $table->integer('category_id');
             $table->integer('game_id');
-            $table->timestamps();
         });
     }
 

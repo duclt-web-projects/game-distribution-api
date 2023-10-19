@@ -17,7 +17,6 @@ class CreateGameTagsTable extends Migration
             $table->id();
             $table->integer('game_id');
             $table->integer('tag_id');
-            $table->timestamps();
         });
     }
 

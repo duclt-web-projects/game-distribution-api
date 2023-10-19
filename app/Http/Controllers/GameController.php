@@ -9,6 +9,13 @@ use Illuminate\Support\Collection;
 
 class GameController extends BaseController
 {
+    private $baseFilter = [
+        'status' => GameConst::ACCEPTED,
+        'active' => GameConst::ACTIVE,
+    ];
+
+    private $baseCol = ['id', 'name', 'slug', 'thumbnail'];
+
     public function __construct(GameService $gamesService)
     {
         $this->service = $gamesService;
@@ -21,12 +28,11 @@ class GameController extends BaseController
 
     public function list(Request $request)
     {
-        $filter = [
-            'name' => $request->get('name') ?? '',
-            'categories' => $request->get('categories') ? explode(',', $request->get('categories')) : []
-        ];
+        list($filter, $sort, $limit, $perPage) = $this->getParamsFromRequest($request);
 
-        return $this->service->list($filter);
+        $filter = array_merge($filter, $this->baseFilter);
+
+        return $this->service->getAll($filter, $sort, $limit, $perPage);
     }
 
     public function featuredList(Request $request)
@@ -58,62 +64,16 @@ class GameController extends BaseController
 
     public function promoFeature(): array
     {
-        return $this->service->promoFeature();
+        $games = $this->service->getAll($this->baseFilter, ['is_hot', 'desc'], 4, 0, $this->baseCol);
+
+        return [
+            'hotGame' => $games[0],
+            'featureGame' => $games->slice(1)
+        ];
     }
 
     public function promoList(): Collection
     {
-        return $this->service->promoList();
-    }
-
-    public function listByUser(string $userId)
-    {
-        return $this->service->listByUser($userId);
-    }
-
-    public function store(Request $request)
-    {
-        $rules = [
-            'name' => 'required|string|max:255',
-        ];
-
-        $errors = $this->validate($request, $rules);
-
-        if ($errors) {
-            return $this->handleError($errors);
-        }
-
-        return $this->service->store($request->all());
-    }
-
-    public function edit(string $id, Request $request)
-    {
-        $rules = [
-            'name' => 'nullable|string|max:255',
-            'width' => 'nullable|numeric',
-            'height' => 'nullable|numeric',
-        ];
-
-        $errors = $this->validate($request, $rules);
-        if ($errors) {
-            return $this->handleError($errors);
-        }
-
-        return $this->service->edit($id, $request->all());
-    }
-
-    public function changeStatus(string $id)
-    {
-        return $this->service->changeStatus($id);
-    }
-
-    public function uploadThumbnail(string $id)
-    {
-        return $this->service->uploadThumbnail($id);
-    }
-
-    public function uploadGame(string $id)
-    {
-        return $this->service->uploadGame($id);
+        return $this->service->getAll($this->baseFilter, ['id', 'asc'], 6, 0, $this->baseCol);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\RequestDataTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -10,10 +11,13 @@ use Illuminate\Support\Facades\Validator;
 
 class BaseController extends Controller
 {
-    use FilterBuilderTrait;
+    use FilterBuilderTrait, RequestDataTrait;
+
     protected $service;
     protected $limit = 0;
     protected $perPage = 10;
+
+    protected $filterExcept = ['sort', 'order', 'limit', 'perPage'];
 
     /**
      * @param Request $request

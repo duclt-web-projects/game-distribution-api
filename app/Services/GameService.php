@@ -21,26 +21,6 @@ class GameService extends BaseService
         return $this->getAll([['status', '=', GameConst::ACCEPTED]]);
     }
 
-    public function list($filter)
-    {
-        $query = $this->model->where([
-            ['status', '=', GameConst::ACCEPTED],
-            ['active', '=', GameConst::ACTIVE]
-        ]);
-
-        if ($filter['name']) {
-            $query = $query->where('name', 'LIKE', '%' . $filter['name'] . '%');
-        }
-
-        if ($filter['categories']) {
-            $query = $query->whereHas('categories', function ($q) use ($filter) {
-                $q->whereIn('categories.id', $filter['categories']);
-            });
-        }
-
-        return $query->paginate(10);
-    }
-
     public function featuredList($data)
     {
         $query = $this->model->where([
@@ -61,36 +41,6 @@ class GameService extends BaseService
         if (!$game) return null;
 
         return $game;
-    }
-
-    public function promoFeature(): array
-    {
-        $games = $this->model->withoutGlobalScopes()
-            ->where([
-                ['status', '=', GameConst::ACCEPTED],
-                ['active', '=', GameConst::ACTIVE]
-            ])->limit(4)->get();
-
-        $hotGame = $games[0];
-        $featureGame = $games->slice(1);
-
-        return [
-            'hotGame' => $hotGame,
-            'featureGame' => $featureGame,
-        ];
-    }
-
-    public function promoList(): Collection
-    {
-        return $this->model->where([
-            ['status', '=', GameConst::ACCEPTED],
-            ['active', '=', GameConst::ACTIVE]
-        ])->limit(6)->get();
-    }
-
-    public function listByUser(string $userId)
-    {
-        return $this->model->where('author_id', $userId)->paginate(self::LIMIT);
     }
 
     public function store(array $data)

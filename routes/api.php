@@ -35,32 +35,32 @@ Route::group([
 // ====================== Games ======================
 Route::group(['prefix' => 'games'], function () {
     Route::get('', 'GameController@index');
-    Route::get('/list', 'GameController@list');
-    Route::get('/featured-list', 'GameController@featuredList');
-    Route::get('/promo-feature', 'GameController@promoFeature');
-    Route::get('/promo-list', 'GameController@promoList');
-
-    Route::group(['middleware' => 'jwt.verify'], function () {
-        Route::get('/user/{id}', 'GameController@listByUser');
-    });
+    Route::get('list', 'GameController@list');
+    Route::get('featured-list', 'GameController@featuredList');
+    Route::get('promo-feature', 'GameController@promoFeature');
+    Route::get('promo-list', 'GameController@promoList');
 });
 
 Route::group(['prefix' => 'game'], function () {
-    Route::get('/{id}', 'GameController@detail');
-
-
-    Route::group(['middleware' => 'jwt.verify'], function () {
-        Route::post('/store', 'GameController@store');
-        Route::post('/edit/{id}', 'GameController@edit');
-        Route::post('/status/{id}', 'GameController@changeStatus');
-        Route::post('/upload-thumbnail/{id}', 'GameController@uploadThumbnail');
-        Route::post('/upload-game/{id}', 'GameController@uploadGame');
-    });
+    Route::get('{id}', 'GameController@detail');
 });
 
 // ====================== Categories ======================
 Route::group(['prefix' => 'categories'], function () {
     Route::get('', 'CategoryController@index');
-    Route::get('/list', 'CategoryController@list');
-    Route::get('/{slug}', 'CategoryController@detail');
+    Route::get('list', 'CategoryController@list');
+    Route::get('{slug}', 'CategoryController@detail');
+});
+
+// ====================== Users ======================
+Route::group(['prefix' => 'user', 'middleware' => 'jwt.verify', 'namespace' => 'User'], function () {
+    Route::get('games', 'UserGameController@list');
+
+    Route::prefix('game')->group(function () {
+        Route::post('', 'UserGameController@store');
+        Route::post('{gameId}', 'UserGameController@edit');
+        Route::post('status/{gameId}', 'UserGameController@changeStatus');
+        Route::post('upload-thumbnail/{gameId}', 'UserGameController@uploadThumbnail');
+        Route::post('upload-game/{gameId}', 'UserGameController@uploadGame');
+    });
 });

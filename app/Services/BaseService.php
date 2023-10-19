@@ -12,25 +12,49 @@ abstract class BaseService
 {
     use ScopeRepositoryTrait;
     use ScopeCondition;
-
-    protected $total = 0;
     protected $model;
 
+    protected $relations = [];
+
+    protected $total = 0;
     protected const LIMIT = 10;
 
-    public function getAll(array $filter = [], array $sort = [], int $limit = 0, array $columns = [])
+    public function setRelations($relations)
     {
-        $query = $this->model;
-        $query = $this->scopeFilter($query, $filter);
+        $this->relations = $relations;
+    }
 
-        if ($columns) $query->select($columns);
+    public function getRelations()
+    {
+        return $this->relations;
+    }
 
-        if ($sort) {
-            list($col, $dir) = $sort;
-            $query = $query->orderBy($col, $dir);
+    public function getAll(array $filter = [], array $sort = [], int $limit = 0, int $perPage = 0 ,array $columns = [])
+    {
+        $query = $this->model->filters($filter);
+
+        if (count($this->relations)) {
+            $query = $query->with($this->relations);
         }
 
-        return $limit ? $query->paginate($limit) : $query->get();
+        if (count($columns)) {
+            $query = $query->select($columns);
+        }
+
+        if (count($sort)) {
+            list($col, $dir) = $sort;
+            $query = $query->withoutGlobalScopes()->orderBy($col, $dir);
+        }
+
+        if ($limit) {
+            return $query->limit($limit)->get();
+        }
+
+        if ($perPage) {
+            return $query->paginate($perPage);
+        }
+
+        return $query->get();
     }
 
     public function getTotal(): int

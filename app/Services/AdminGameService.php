@@ -15,12 +15,16 @@ class AdminGameService extends BaseService
     }
 
 
-    public function list(array $filter)
+    public function list(array $filter, array $sort)
     {
         $query = $this->gameModel->with(['categories', 'author']);
 
         if ($filter['name']) {
             $query = $query->where('name', 'LIKE', '%' . $filter['name'] . '%');
+        }
+
+        if($sort) {
+            $query = $query->withoutGlobalScopes()->orderBy($sort['col'], $sort['dir']);
         }
 
         return  $query->paginate(4);

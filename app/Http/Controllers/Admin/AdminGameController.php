@@ -4,21 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Services\AdminGameService;
+use App\Services\GameService;
 use Illuminate\Http\Request;
 
 class AdminGameController extends BaseController
 {
-    public function __construct(AdminGameService $service)
+    private $gameService;
+
+    public function __construct(GameService $gameService)
     {
-        $this->service = $service;
+        $this->gameService = $gameService;
     }
 
     public function list(Request $request)
     {
-        $filter = [
-            'name' => $request->get('name') ?? '',
-        ];
-        return $this->service->list($filter);
+        list($filter, $sort) = $this->getParamsFromRequest($request);
+
+        return $this->service->gameService($filter, $sort, 0, 10);
     }
 
     public function changeStatus(string $id, Request $request)
@@ -34,6 +36,6 @@ class AdminGameController extends BaseController
 
         $status = $request->get('status');
 
-        return $this->service->changeStatus($id, $status);
+        return $this->gameService->changeStatus($id, $status);
     }
 }
