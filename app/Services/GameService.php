@@ -87,6 +87,25 @@ class GameService extends BaseService
         return $game;
     }
 
+    public function change(string $id, string $col, string $value, $isUser = false)
+    {
+        $query = $this->model;
+
+        if($isUser) {
+            $query = $query->where('author_id', auth()->user()->id ?? 0);
+        }
+
+        $game = $query->where('id', $id)->first();
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $game->fill([$col => $value])->save();
+
+        return $game;
+    }
+
     public function uploadThumbnail(string $id)
     {
         $game = $this->model->find($id);

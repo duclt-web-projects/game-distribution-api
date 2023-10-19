@@ -59,7 +59,7 @@ Route::group(['prefix' => 'user', 'middleware' => 'jwt.verify', 'namespace' => '
     Route::prefix('game')->group(function () {
         Route::post('', 'UserGameController@store');
         Route::post('{gameId}', 'UserGameController@edit');
-        Route::post('status/{gameId}', 'UserGameController@changeStatus');
+        Route::post('change-status/{gameId}', 'UserGameController@changeStatus');
         Route::post('upload-thumbnail/{gameId}', 'UserGameController@uploadThumbnail');
         Route::post('upload-game/{gameId}', 'UserGameController@uploadGame');
     });

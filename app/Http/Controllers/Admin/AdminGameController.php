@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Constants\GameConst;
 use App\Http\Controllers\BaseController;
 use App\Services\AdminGameService;
 use App\Services\GameService;
@@ -20,7 +21,9 @@ class AdminGameController extends BaseController
     {
         list($filter, $sort) = $this->getParamsFromRequest($request);
 
-        return $this->service->gameService($filter, $sort, 0, 10);
+        $this->gameService->setRelations(['categories:name,slug', 'tags:name,slug']);
+
+        return $this->gameService->getAll($filter, $sort, 0, 10);
     }
 
     public function changeStatus(string $id, Request $request)
@@ -36,6 +39,10 @@ class AdminGameController extends BaseController
 
         $status = $request->get('status');
 
-        return $this->gameService->changeStatus($id, $status);
+        if (!in_array($status, [GameConst::ACCEPTED, GameConst::REJECTED])) {
+            return response()->json(['message' => "Status is invalid"], 400);
+        }
+
+        return $this->gameService->change($id, 'status', $status);
     }
 }

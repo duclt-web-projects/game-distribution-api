@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Constants\GameConst;
 use App\Http\Controllers\BaseController;
 use App\Services\AdminGameService;
 use App\Services\GameService;
@@ -58,9 +59,24 @@ class UserGameController extends BaseController
         return $this->gameService->edit($id, $request->all());
     }
 
-    public function changeStatus(string $id)
+    public function changeStatus(string $id, Request $request)
     {
-        return $this->gameService->changeStatus($id);
+        $rules = [
+            'status' => 'required',
+        ];
+        $errors = $this->validate($request, $rules);
+
+        if ($errors) {
+            return $this->handleError($errors);
+        }
+
+        $status = $request->get('status');
+
+        if (!in_array($status, [GameConst::ACCEPTED, GameConst::REJECTED])) {
+            return response()->json(['message' => "Status is invalid"], 400);
+        }
+
+        return $this->gameService->change($id, 'active', $status);
     }
 
     public function uploadThumbnail(string $id)
