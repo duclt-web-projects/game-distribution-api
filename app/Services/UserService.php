@@ -13,15 +13,31 @@ class UserService extends BaseService
         $this->model = new User();
     }
 
-    public function register(Request $request)
+    public function register(array $data)
     {
-        $existUser = $this->findBy([['email', '=', $request->get("email")]]);
+        $existUser = $this->findBy([['email', '=', $data["email"]]]);
         if ($existUser) return null;
 
         $user = $this->model->create([
-            'name' => $request->get("name"),
-            'email' => $request->get("email"),
-            'password' => Hash::make($request->get("password")),
+            'name' => $data["name"],
+            'email' => $data["email"],
+            'password' => Hash::make($data["password"]),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return $user->refresh();
+    }
+
+    public function loginWithProvider(array $data)
+    {
+        $existUser = $this->findBy([['email', '=', $data["email"]]]);
+
+        if($existUser) return $existUser;
+
+        $user = $this->model->create([
+            'name' => $data["name"],
+            'email' => $data["email"],
             'created_at' => now(),
             'updated_at' => now(),
         ]);

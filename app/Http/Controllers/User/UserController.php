@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Constants\TokenStatus;
+use App\Http\Controllers\BaseController;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,7 +58,7 @@ class UserController extends BaseController
             return $this->handleError($errors);
         }
 
-        $user = $this->service->register($request);
+        $user = $this->service->register($request->all());
 
         if (!$user) {
             return response()->json([
@@ -104,5 +105,28 @@ class UserController extends BaseController
     public function profile()
     {
         return response()->json(auth()->user());
+    }
+
+    public function loginWithProvider(Request $request)
+    {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+        ];
+        $errors = $this->validate($request, $rules);
+
+        if ($errors) {
+            return $this->handleError($errors);
+        }
+
+        $user = $this->service->loginWithProvider($request->all());
+
+        $token = Auth::guard('api')->login($user);
+
+        return response()->json([
+            'user' => $user,
+            'access_token' => $token,
+            'message' => 'User created successfully',
+        ]);
     }
 }

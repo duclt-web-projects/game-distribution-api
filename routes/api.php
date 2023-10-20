@@ -20,9 +20,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // ====================== User Authentication ======================
 Route::group([
-    'prefix' => 'auth'
+    'prefix' => 'auth',
+    'namespace' => 'User'
 ], function ($router) {
     Route::post('login', 'UserController@login');
+    Route::post('login-with-provider', 'UserController@loginWithProvider');
     Route::post('register', 'UserController@register');
 
     Route::group(['middleware' => 'jwt.verify'], function () {
