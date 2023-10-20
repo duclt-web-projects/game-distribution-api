@@ -37,6 +37,8 @@ class GameSeeder extends Seeder
                 'height' => $game->height,
                 'play_times' => rand(10, 1000),
                 'is_hot' => rand(0, 1),
+                'type' => 'javascript',
+                'sub_type' => 'webgl',
                 'source_link' => 'games/' . $game->file_game . '/index.html',
                 'description' => $game->description,
                 'thumbnail' => pare_url_file($game->avatar),
