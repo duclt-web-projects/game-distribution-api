@@ -37,7 +37,7 @@ class AdminController extends BaseController
 
         if (!$token) {
             return response()->json([
-                'message' => 'Unauthorized',
+                'message' => 'Email or password is not correct.',
             ], 401);
         }
 
@@ -110,5 +110,50 @@ class AdminController extends BaseController
     public function profile()
     {
         return response()->json(Auth::guard('api_admin')->user());
+    }
+
+    public function edit(Request $request)
+    {
+        $rules = [
+            'name' => 'sometimes|string',
+            'date_of_birth' => 'sometimes|string',
+            'phone' => 'sometimes|string',
+        ];
+        $errors = $this->validate($request, $rules);
+
+        if ($errors) {
+            return $this->handleError($errors);
+        }
+
+        return $this->service->edit($request->all());
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        $rules = [
+            'avatar' => 'required|image',
+        ];
+        $errors = $this->validate($request, $rules);
+
+        if ($errors) {
+            return $this->handleError($errors);
+        }
+
+        return $this->service->uploadAvatar();
+    }
+
+    public function changePassword(Request $request)
+    {
+        $rules = [
+            'old_password' => 'required|string',
+            'new_password' => 'required|string',
+        ];
+        $errors = $this->validate($request, $rules);
+
+        if ($errors) {
+            return $this->handleError($errors);
+        }
+
+        return $this->service->changePassword($request->all());
     }
 }

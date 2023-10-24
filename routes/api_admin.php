@@ -30,7 +30,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'auth'], function () {
         Route::get('logout', 'AdminController@logout');
         Route::get('refresh', 'AdminController@refresh');
-        Route::get('profile', 'AdminController@profile');
     });
 
     // ====================== Games ======================
@@ -50,8 +49,13 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/change-status/{id}', 'AdminCategoryController@changeStatus');
         Route::get('/{id}', 'AdminCategoryController@show');
     });
-});
 
-Route::group(['prefix' => 'categories'], function () {
-    Route::get('/list', 'AdminCategoryController@list');
+    Route::group(['prefix' => 'categories'], function () {
+        Route::get('/list', 'AdminCategoryController@list');
+    });
+
+    Route::get('profile', 'AdminController@profile');
+    Route::post('upload-avatar', 'AdminController@uploadAvatar');
+    Route::post('edit', 'AdminController@edit');
+    Route::post('change-password', 'AdminController@changePassword');
 });
