@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Constants\GameConst;
 use App\Models\Game;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use ZipArchive;
@@ -37,7 +39,15 @@ class GameService extends BaseService
 
     public function detail($id)
     {
-        $game = $this->model->with(['categories:name,slug', 'tags:name,slug'])->find($id);
+//        (['categories:id,name,slug', 'tags:id,name,slug'])/
+        $game = $this->model->with([
+            'categories' => function ($query) {
+                return $query->where('category_games.status', 1);
+            },
+            'tags' => function ($query) {
+                return $query->where('game_tags.status', 1);
+            }])->find($id);
+
         if (!$game) return null;
 
         return $game;
@@ -67,9 +77,41 @@ class GameService extends BaseService
         }
 
         $data['updated_at'] = now();
-        unset($data['category']);
+
+        $newGameCategories = [];
+        $removeGameCategories = [];
+
+        if (array_key_exists('categories', $data)) {
+            $categories = explode(',', $data['categories']);
+
+            $categoryGame = DB::table('category_games')->where('game_id', $id)
+                ->get()->pluck('category_id', 'id')->toArray();
+
+            $newCategories = array_diff($categories, $categoryGame);
+            $removeGameCategories = array_diff($categoryGame, $categories);
+
+            foreach ($newCategories as $category) {
+                $newGameCategories[] = [
+                    'game_id' => $game->id,
+                    'category_id' => $category,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            unset($data['categories']);
+        }
 
         $game->fill($data)->save();
+
+        if (count($newGameCategories)) {
+            DB::table('category_games')->insert($newGameCategories);
+        }
+
+        if (count($removeGameCategories)) {
+            DB::table('category_games')->whereIn('id', array_keys($removeGameCategories))
+                ->update(['status' => 0, 'updated_at' => now()]);
+        }
 
         return $game;
     }
@@ -91,7 +133,7 @@ class GameService extends BaseService
     {
         $query = $this->model;
 
-        if($isUser) {
+        if ($isUser) {
             $query = $query->where('author_id', auth()->user()->id ?? 0);
         }
 

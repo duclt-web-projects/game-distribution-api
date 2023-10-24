@@ -44,9 +44,11 @@ class UserGameController extends BaseController
     public function edit( Request $request, string $id)
     {
         $rules = [
-            'name' => 'nullable|string|max:255',
-            'width' => 'nullable|numeric',
-            'height' => 'nullable|numeric',
+            'name' => 'sometimes|string|max:255',
+            'width' => 'sometimes|numeric',
+            'height' => 'sometimes|numeric',
+            'category' => 'sometimes|string',
+            'description' => 'sometimes|string'
         ];
 
         $errors = $this->validate($request, $rules);
