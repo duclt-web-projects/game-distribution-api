@@ -30,7 +30,6 @@ Route::group([
     Route::group(['middleware' => 'jwt.verify'], function () {
         Route::get('logout', 'UserController@logout');
         Route::get('refresh', 'UserController@refresh');
-        Route::get('profile', 'UserController@profile');
     });
 });
 
@@ -65,4 +64,9 @@ Route::group(['prefix' => 'user', 'middleware' => 'jwt.verify', 'namespace' => '
         Route::post('upload-thumbnail/{gameId}', 'UserGameController@uploadThumbnail');
         Route::post('upload-game/{gameId}', 'UserGameController@uploadGame');
     });
+
+    Route::get('profile', 'UserController@profile');
+    Route::post('upload-avatar', 'UserController@uploadAvatar');
+    Route::post('edit', 'UserController@edit');
+    Route::post('change-password', 'UserController@changePassword');
 });

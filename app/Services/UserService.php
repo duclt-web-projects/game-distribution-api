@@ -44,4 +44,54 @@ class UserService extends BaseService
 
         return $user->refresh();
     }
+
+    public function edit($data)
+    {
+        $user = $this->model->find(auth()->user()->id);
+
+        if (!$user) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $data['updated_at'] = now();
+
+        $user->fill($data)->save();
+
+        return $user;
+    }
+
+    public function uploadAvatar()
+    {
+        $user = $this->model->find(auth()->user()->id);
+
+        if (!$user) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $fileUpload = upload_image('avatar', 'avatars');
+
+        if (isset($fileUpload['name'])) {
+            $fileName = pare_url_file($fileUpload['name'], 'avatars');
+            $user->fill(['avatar' => $fileName])->save();
+        }
+
+        return $user;
+    }
+
+    public function changePassword(array $data)
+    {
+        $user = $this->model->find(auth()->user()->id);
+
+        if (!$user) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $hashedPassword = auth()->user()->getAuthPassword();
+        if (!Hash::check($data['old_password'], $hashedPassword)) {
+            return response()->json(['message' => "Password is not correct"], 400);
+        }
+
+        $user->fill(['password' => Hash::make($data['new_password'])])->save();
+        return $user;
+    }
 }

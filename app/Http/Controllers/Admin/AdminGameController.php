@@ -39,7 +39,7 @@ class AdminGameController extends BaseController
 
         $status = $request->get('status');
 
-        if (!in_array($status, [GameConst::ACCEPTED, GameConst::REJECTED])) {
+        if (!in_array($status, [GameConst::ACCEPTED, GameConst::REJECTED, GameConst::PENDING])) {
             return response()->json(['message' => "Status is invalid"], 400);
         }
 
