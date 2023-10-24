@@ -22,7 +22,7 @@ class CreateAdminsTable extends Migration
             $table->tinyInteger('status')->default(1);
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
-            $table->dateTime('date_of_birth')->nullable();
+            $table->date('date_of_birth')->nullable();
             $table->timestamps();
         });
     }

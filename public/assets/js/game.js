@@ -27,6 +27,7 @@ function setCss(cssName) {
 window.onload = function () {
     document.body.style.cssText =
         "height: 100vh; overflow: hidden; margin: 0; display: flex; justify-content: center; align-items: center";
+    document.getElementById("unity-footer").remove();
     resizeGame();
 };
 
