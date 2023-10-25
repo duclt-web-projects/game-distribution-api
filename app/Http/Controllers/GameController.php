@@ -21,9 +21,13 @@ class GameController extends BaseController
         $this->service = $gamesService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return $this->service->index();
+        list($filter, $sort, $limit) = $this->getParamsFromRequest($request);
+
+        $filter = array_merge($filter, $this->baseFilter);
+
+        return $this->service->getAll($filter, $sort, $limit);
     }
 
     public function list(Request $request)
