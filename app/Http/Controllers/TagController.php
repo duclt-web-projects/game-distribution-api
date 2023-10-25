@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Constants\CategoryConst;
-use App\Services\CategoryService;
+use App\Constants\TagConst;
+use App\Services\TagService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
-class CategoryController extends BaseController
+class TagController extends BaseController
 {
-    private $baseFilter = [
-        'status' => CategoryConst::ACTIVE
-    ];
-
-    public function __construct(CategoryService $categoryService)
+    public function __construct(TagService $tagService)
     {
-        $this->service = $categoryService;
+        $this->service = $tagService;
     }
+
+    private $baseFilter = [
+        'status' => TagConst::ACTIVE
+    ];
 
     public function index(Request $request)
     {

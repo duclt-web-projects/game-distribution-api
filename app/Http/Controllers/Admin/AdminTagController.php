@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
-use App\Services\CategoryService;
+use App\Services\TagService;
 use Illuminate\Http\Request;
 
-class AdminCategoryController extends BaseController
+class AdminTagController extends BaseController
 {
-    public function __construct(CategoryService $service)
+    public function __construct(TagService $service)
     {
         $this->service = $service;
     }

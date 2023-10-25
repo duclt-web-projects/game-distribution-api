@@ -44,7 +44,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // ====================== Categories ======================
 
     Route::group(['prefix' => 'category'], function () {
-        Route::post('/store', 'AdminCategoryController@store');
+        Route::post('', 'AdminCategoryController@store');
         Route::post('/edit/{id}', 'AdminCategoryController@edit');
         Route::post('/change-status/{id}', 'AdminCategoryController@changeStatus');
         Route::get('/{id}', 'AdminCategoryController@show');
@@ -54,6 +54,20 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/list', 'AdminCategoryController@list');
     });
 
+    // ====================== Tags ======================
+
+    Route::group(['prefix' => 'tags'], function () {
+        Route::get('/list', 'AdminTagController@list');
+    });
+
+    Route::group(['prefix' => 'tag'], function () {
+        Route::post('', 'AdminTagController@store');
+        Route::post('/edit/{id}', 'AdminTagController@edit');
+        Route::post('/change-status/{id}', 'AdminTagController@changeStatus');
+        Route::get('/{id}', 'AdminTagController@show');
+    });
+
+    // ====================== Admin Profile ======================
     Route::get('profile', 'AdminController@profile');
     Route::post('upload-avatar', 'AdminController@uploadAvatar');
     Route::post('edit', 'AdminController@edit');

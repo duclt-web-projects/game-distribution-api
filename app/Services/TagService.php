@@ -2,16 +2,15 @@
 
 namespace App\Services;
 
-use App\Constants\CategoryConst;
-use App\Models\Category;
-use Illuminate\Support\Collection;
+use App\Constants\TagConst;
+use App\Models\Tag;
 use Illuminate\Support\Str;
 
-class CategoryService extends BaseService
+class TagService extends BaseService
 {
     public function __construct()
     {
-        $this->model = new Category();
+        $this->model = new Tag();
     }
 
     public function index(array $filter = [], array $sort = [], int $limit = 0, array $columns = ['*'])
@@ -54,7 +53,7 @@ class CategoryService extends BaseService
         $isExist = $this->model->where('slug', $slug)->count();
 
         if ($isExist) {
-            return response()->json(['message' => "Category is existed"], 400);
+            return response()->json(['message' => "Tag is existed"], 400);
         }
 
         $dataInsert = [
@@ -63,37 +62,37 @@ class CategoryService extends BaseService
             'created_at' => now(),
             'updated_at' => now(),
         ];
-        $category = $this->model->create($dataInsert);
+        $tag = $this->model->create($dataInsert);
 
-        return $category;
+        return $tag;
     }
 
     public function edit(string $id, array $data)
     {
-        $category = $this->model->find($id);
+        $tag = $this->model->find($id);
 
-        if (!$category) {
+        if (!$tag) {
             return response()->json(['message' => "Not found"], 404);
         }
 
         $data['slug'] = Str::slug($data['name']);
         $data['updated_at'] = now();
 
-        $category->fill($data)->save();
+        $tag->fill($data)->save();
 
-        return $category;
+        return $tag;
     }
 
     public function changeStatus(string $id)
     {
-        $category = $this->model->find($id);
+        $tag = $this->model->find($id);
 
-        if (!$category) {
+        if (!$tag) {
             return response()->json(['message' => "Not found"], 404);
         }
 
-        $category->fill(['status' => $category->status === CategoryConst::ACTIVE ? CategoryConst::INACTIVE : CategoryConst::ACTIVE])->save();
+        $tag->fill(['status' => $tag->status === TagConst::ACTIVE ? TagConst::INACTIVE : TagConst::ACTIVE])->save();
 
-        return $category;
+        return $tag;
     }
 }

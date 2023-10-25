@@ -53,6 +53,13 @@ Route::group(['prefix' => 'categories'], function () {
     Route::get('{slug}', 'CategoryController@detail');
 });
 
+// ====================== Tags ======================
+Route::group(['prefix' => 'tags'], function () {
+    Route::get('', 'TagController@index');
+    Route::get('list', 'TagController@list');
+    Route::get('{slug}', 'TagController@detail');
+});
+
 // ====================== Users ======================
 Route::group(['prefix' => 'user', 'middleware' => 'jwt.verify', 'namespace' => 'User'], function () {
     Route::get('games', 'UserGameController@list');

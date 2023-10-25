@@ -18,7 +18,7 @@ class GameService extends BaseService
         $this->model = new Game();
     }
 
-    public function index(): Collection
+    public function index()
     {
         return $this->getAll([['status', '=', GameConst::ACCEPTED]]);
     }

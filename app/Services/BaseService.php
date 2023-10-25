@@ -15,6 +15,7 @@ abstract class BaseService
     protected $model;
 
     protected $relations = [];
+    protected $relationsCount = [];
 
     protected $total = 0;
     protected const LIMIT = 10;
@@ -29,6 +30,11 @@ abstract class BaseService
         return $this->relations;
     }
 
+    public function setRelationsCount($relations)
+    {
+        $this->relationsCount = $relations;
+    }
+
     public function getAll(array $filter = [], array $sort = [], int $limit = 0, int $perPage = 0 ,array $columns = [])
     {
         $query = $this->model->filters($filter);
@@ -39,6 +45,10 @@ abstract class BaseService
 
         if (count($columns)) {
             $query = $query->select($columns);
+        }
+
+        if (count($this->relationsCount)) {
+            $query = $query->withCount($this->relationsCount);
         }
 
         if (count($sort)) {

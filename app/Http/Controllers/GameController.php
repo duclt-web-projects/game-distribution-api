@@ -21,7 +21,7 @@ class GameController extends BaseController
         $this->service = $gamesService;
     }
 
-    public function index(): Collection
+    public function index()
     {
         return $this->service->index();
     }

@@ -17,6 +17,8 @@ class CreateTagsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->tinyInteger('status')->default(1)->index();
+            $table->integer('order')->default(0);
             $table->timestamps();
         });
     }
