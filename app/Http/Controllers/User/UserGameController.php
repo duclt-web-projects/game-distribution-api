@@ -44,10 +44,11 @@ class UserGameController extends BaseController
     public function edit( Request $request, string $id)
     {
         $rules = [
-            'name' => 'sometimes|string|max:255',
-            'width' => 'sometimes|numeric',
-            'height' => 'sometimes|numeric',
-            'category' => 'sometimes|string',
+            'name' => 'required|string|max:255',
+            'width' => 'required|numeric',
+            'height' => 'required|numeric',
+            'category' => 'sometimes|array',
+            'tag' => 'sometimes|array',
             'description' => 'sometimes|string'
         ];
 

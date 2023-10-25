@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\CategoryConst;
 use App\Constants\GameConst;
 use App\Models\Game;
 use Illuminate\Database\Eloquent\Builder;
@@ -78,18 +79,17 @@ class GameService extends BaseService
 
         $data['updated_at'] = now();
 
-        $newGameCategories = [];
-        $removeGameCategories = [];
-
         if (array_key_exists('categories', $data)) {
-            $categories = explode(',', $data['categories']);
+            $categories = $data['categories'];
+            $categoryGames = DB::table('category_games')
+                ->where('game_id', $id)
+                ->get()
+                ->pluck('category_id', 'id')
+                ->toArray();
 
-            $categoryGame = DB::table('category_games')->where('game_id', $id)
-                ->get()->pluck('category_id', 'id')->toArray();
+            list($newCategories, $activeGameCategories, $inactiveGameCategories) = $this->convertData($categoryGames, $categories);
 
-            $newCategories = array_diff($categories, $categoryGame);
-            $removeGameCategories = array_diff($categoryGame, $categories);
-
+            $newGameCategories = [];
             foreach ($newCategories as $category) {
                 $newGameCategories[] = [
                     'game_id' => $game->id,
@@ -102,18 +102,68 @@ class GameService extends BaseService
             unset($data['categories']);
         }
 
+        if (array_key_exists('tags', $data)) {
+            $tags = $data['tags'];
+            $tagGames = DB::table('game_tags')->where('game_id', $id)
+                ->get()
+                ->pluck('tag_id', 'id')
+                ->toArray();
+
+            list($newTags, $activeGameTags, $inactiveGameTags) = $this->convertData($tagGames, $tags);
+
+            $newGameTags = [];
+            foreach ($newTags as $tag) {
+                $newGameTags[] = [
+                    'game_id' => $game->id,
+                    'tag_id' => $tag,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            unset($data['tags']);
+        }
+
         $game->fill($data)->save();
 
-        if (count($newGameCategories)) {
+        if (isset($newGameCategories) && count($newGameCategories)) {
             DB::table('category_games')->insert($newGameCategories);
         }
 
-        if (count($removeGameCategories)) {
-            DB::table('category_games')->whereIn('id', array_keys($removeGameCategories))
+        if (isset($inactiveGameCategories) && count($inactiveGameCategories)) {
+            DB::table('category_games')->whereIn('id', array_keys($inactiveGameCategories))
                 ->update(['status' => 0, 'updated_at' => now()]);
         }
 
+        if (isset($activeGameCategories) && count($activeGameCategories)) {
+            DB::table('category_games')->whereIn('id', array_keys($activeGameCategories))
+                ->update(['status' => 1, 'updated_at' => now()]);
+        }
+
+        if (isset($newGameTags) && count($newGameTags)) {
+            DB::table('game_tags')->insert($newGameTags);
+        }
+
+        if (isset($inactiveGameTags) && count($inactiveGameTags)) {
+            DB::table('game_tags')->whereIn('id', array_keys($inactiveGameTags))
+                ->update(['status' => 0, 'updated_at' => now()]);
+        }
+
+        if (isset($activeGameTags) && count($activeGameTags)) {
+            DB::table('game_tags')->whereIn('id', array_keys($activeGameTags))
+                ->update(['status' => 1, 'updated_at' => now()]);
+        }
+
         return $game;
+    }
+
+    private function convertData($dataDb, $dataRequest)
+    {
+        $newRecords = array_diff($dataRequest, $dataDb);
+        $inactiveRecords = array_diff($dataDb, $dataRequest);
+        $activeRecords = array_intersect($dataDb, $dataRequest);
+
+        return [$newRecords, $activeRecords, $inactiveRecords];
     }
 
     public function changeStatus(string $id)
