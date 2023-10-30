@@ -40,13 +40,12 @@ class GameService extends BaseService
 
     public function detail($id)
     {
-//        (['categories:id,name,slug', 'tags:id,name,slug'])/
         $game = $this->model->with([
             'categories' => function ($query) {
-                return $query->where('category_games.status', 1);
+                return $query->select(['category_games.id', 'name', 'slug'])->where('category_games.status', 1);
             },
             'tags' => function ($query) {
-                return $query->where('game_tags.status', 1);
+                return $query->select(['game_tags.id', 'name', 'slug'])->where('game_tags.status', 1);
             }])->find($id);
 
         if (!$game) return null;

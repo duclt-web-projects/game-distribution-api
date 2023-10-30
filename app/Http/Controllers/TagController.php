@@ -37,11 +37,11 @@ class TagController extends BaseController
 
     public function detail(string $slug)
     {
-        $category = $this->service->detail($slug);
+        $tag = $this->service->detail($slug);
 
-        if (empty($category)) {
+        if (empty($tag)) {
             return response()->json(['message' => "Not found"], 404);
         }
-        return $category;
+        return $tag;
     }
 }

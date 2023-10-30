@@ -57,4 +57,12 @@ class Game extends BaseModel
             $q->whereIn('categories.id', $categories);
         });
     }
+
+    public function scopeTags(Builder $query, $value)
+    {
+        $tags = explode(',', $value);
+        return $query->whereHas('tags', function ($q) use ($tags) {
+            $q->whereIn('tags.id', $tags);
+        });
+    }
 }
