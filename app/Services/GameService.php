@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Constants\CategoryConst;
 use App\Constants\GameConst;
 use App\Models\Game;
+use App\Models\GameRating;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -278,5 +279,52 @@ class GameService extends BaseService
         $game->fill(['source_link' => $indexFilePath])->save();
 
         return $game;
+    }
+
+    public function listComments(string $gameId)
+    {
+        $game = $this->model->find($gameId);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        return GameRating::query()->with('user:id,name,avatar')->where('game_id', $game->id)
+            ->where('status', 1)
+            ->get();
+    }
+
+    public function addComment(string $gameId, array $data)
+    {
+        $game = $this->model->find($gameId);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $data['user_id'] = auth()->user()->id ?? 1;
+        $data['game_id'] = $game->id;
+        $data['created_at'] = now();
+
+        return GameRating::create($data);
+    }
+
+    public function editComment(string $gameId, string $commentId, array $data)
+    {
+        $game = $this->model->find($gameId);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $comment = GameRating::find($commentId);
+
+        if (!$comment) {
+            return response()->json(['message' => "Comment is not found"], 404);
+        }
+
+        $comment->fill($data)->save();
+
+        return $comment;
     }
 }

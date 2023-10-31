@@ -80,4 +80,57 @@ class GameController extends BaseController
     {
         return $this->service->getAll($this->baseFilter, ['id', 'asc'], 6, 0, $this->baseCol);
     }
+
+    public function listComments(string $gameId)
+    {
+        return $this->service->listComments($gameId);
+    }
+
+    public function addComment(string $id, Request $request)
+    {
+        $rules = [
+            'comment' => 'sometimes|string|max:255',
+            'rating' => 'sometimes|numeric',
+        ];
+
+        $errors = $this->validate($request, $rules);
+
+        if ($errors) {
+            return $this->handleError($errors);
+        }
+
+        return $this->service->addComment($id, $request->all());
+    }
+
+    public function editComment(string $id, string $commentId, Request $request)
+    {
+        $rules = [
+            'comment' => 'sometimes|string|max:255',
+            'rating' => 'sometimes|numeric',
+        ];
+
+        $errors = $this->validate($request, $rules);
+
+        if ($errors) {
+            return $this->handleError($errors);
+        }
+
+        return $this->service->editComment($id, $commentId, $request->all());
+    }
+
+    public function changeCommentStatus(string $id, string $commentId, Request $request)
+    {
+        $rules = [
+            'status' => 'require|number',
+        ];
+
+        $errors = $this->validate($request, $rules);
+
+        if ($errors) {
+            return $this->handleError($errors);
+        }
+
+        return $this->service->editComment($id, $commentId, $request->all());
+    }
+
 }

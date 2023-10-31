@@ -40,6 +40,11 @@ class Game extends BaseModel
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    public function comments()
+    {
+        return $this->hasMany(GameRating::class);
+    }
+
     public function scopeActive(Builder $query, $value)
     {
         return $query->where('active', $value);

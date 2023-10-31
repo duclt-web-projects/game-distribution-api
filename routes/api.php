@@ -44,6 +44,12 @@ Route::group(['prefix' => 'games'], function () {
 
 Route::group(['prefix' => 'game'], function () {
     Route::get('{id}', 'GameController@detail');
+
+    Route::get('{id}/comments', 'GameController@listComments');
+    Route::group(['middleware' => 'jwt.verify'], function () {
+        Route::post('{id}/comment', 'GameController@addComment');
+        Route::post('{id}/comment/{commentId}', 'GameController@editComment');
+    });
 });
 
 // ====================== Categories ======================
@@ -76,4 +82,6 @@ Route::group(['prefix' => 'user', 'middleware' => 'jwt.verify', 'namespace' => '
     Route::post('upload-avatar', 'UserController@uploadAvatar');
     Route::post('edit', 'UserController@edit');
     Route::post('change-password', 'UserController@changePassword');
+
+
 });
