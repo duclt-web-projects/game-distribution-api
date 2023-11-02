@@ -20,9 +20,20 @@ class GameService extends BaseService
         $this->model = new Game();
     }
 
-    public function index()
+    public function index($filter, $sort, $limit)
     {
-        return $this->getAll([['status', '=', GameConst::ACCEPTED]]);
+        $query = $this->model->withAvg('comments as rating', 'rating')->filters([['status', '=', GameConst::ACCEPTED]]);
+
+        if (count($sort)) {
+            list($col, $dir) = $sort;
+            $query = $query->withoutGlobalScopes()->orderBy($col, $dir);
+        }
+
+        if ($limit) {
+            return $query->limit($limit)->get();
+        }
+
+        return $query->get();
     }
 
     public function featuredList($data)

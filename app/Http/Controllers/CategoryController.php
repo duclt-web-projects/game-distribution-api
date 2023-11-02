@@ -24,7 +24,7 @@ class CategoryController extends BaseController
 
         $filter = array_merge($filter, $this->baseFilter);
 
-        return $this->service->index($filter, $sort, $limit, ['id', 'name', 'slug']);
+        return $this->service->index($filter, $sort, $limit, ['id', 'name', 'slug', 'icon']);
     }
 
     public function list(Request $request)

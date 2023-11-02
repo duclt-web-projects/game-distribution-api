@@ -20,14 +20,15 @@ class CategorySeeder extends Seeder
         DB::table('categories')->truncate();
 
         $categories = file_get_contents(base_path('database/files/categories.json'));
-        $categories = json_decode($categories);
+        $categories = json_decode($categories, 1);
 
         $data = [];
 
         foreach ($categories as $category) {
             $data[] = [
-                'name' => $category,
-                'slug' => Str::slug($category),
+                'name' => $category['label'],
+                'slug' => Str::slug($category['label']),
+                'icon' => $category['icon'],
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ];

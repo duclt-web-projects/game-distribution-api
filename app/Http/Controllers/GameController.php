@@ -27,7 +27,7 @@ class GameController extends BaseController
 
         $filter = array_merge($filter, $this->baseFilter);
 
-        return $this->service->getAll($filter, $sort, $limit);
+        return $this->service->index($filter, $sort, $limit);
     }
 
     public function list(Request $request)
@@ -74,6 +74,16 @@ class GameController extends BaseController
             'hotGame' => $games[0],
             'featureGame' => $games->slice(1)
         ];
+    }
+
+    public function listBanner()
+    {
+        return  $this->service->getAll($this->baseFilter, ['is_banner', 'desc'], 4, 0, $this->baseCol);
+    }
+
+    public function listHot()
+    {
+        return  $this->service->getAll($this->baseFilter, ['is_hot', 'desc'], 10, 0, $this->baseCol);
     }
 
     public function promoList(): Collection

@@ -16,6 +16,10 @@ class Game extends BaseModel
 
     protected $guarded = [];
 
+    protected $casts = [
+        'rating' => 'float'
+    ];
+
     protected static function boot()
     {
         parent::boot();

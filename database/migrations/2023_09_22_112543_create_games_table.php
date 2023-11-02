@@ -25,6 +25,7 @@ class CreateGamesTable extends Migration
             $table->integer('author_id')->default(1);
             $table->integer('play_times')->default(0);
             $table->tinyInteger('is_hot')->default(0);
+            $table->tinyInteger('is_banner')->default(0);
             $table->text('description')->nullable();
             $table->text('reason')->nullable();
             $table->string('type')->nullable();
