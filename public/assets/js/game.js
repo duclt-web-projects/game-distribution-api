@@ -14,16 +14,14 @@ function resizeGame() {
 
     const screenRatio = document.documentElement.clientWidth / document.documentElement.clientHeight;
 
-    console.log(screenRatio, gameRatio)
-
     if (gameRatio > 1) {
-        canvas.style.cssText = fullscreen;
+        canvas.style.cssText = maxWidth;
     } else {
-        if (screenRatio > 1) {
             canvas.style.cssText = maxHeight;
-        } else {
-            canvas.style.cssText = fullscreen;
-        }
+        // if (screenRatio > 1) {
+        // } else {
+        //     canvas.style.cssText = fullscreen;
+        // }
     }
 }
 

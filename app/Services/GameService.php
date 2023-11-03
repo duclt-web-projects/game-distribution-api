@@ -22,7 +22,7 @@ class GameService extends BaseService
 
     public function index($filter, $sort, $limit)
     {
-        $query = $this->model->withAvg('comments as rating', 'rating')->filters([['status', '=', GameConst::ACCEPTED]]);
+        $query = $this->model->withAvg('comments as rating', 'rating')->filters($filter);
 
         if (count($sort)) {
             list($col, $dir) = $sort;
