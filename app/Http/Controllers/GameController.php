@@ -143,4 +143,8 @@ class GameController extends BaseController
         return $this->service->editComment($id, $commentId, $request->all());
     }
 
+    public function gamesByCategory(string $slug)
+    {
+        return $this->service->gamesByCategory($slug);
+    }
 }

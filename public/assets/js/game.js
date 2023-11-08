@@ -1,5 +1,5 @@
-const maxWidth = "width: 100%; height: auto;";
-const maxHeight = "height: 100%; width: auto;";
+const maxWidth = "width: 100%; height: auto; max-height:100%";
+const maxHeight = "height: 100%; width: auto; max-width:100%";
 const fullscreen = "height: 100%; width: 100%;";
 
 var canvas;
@@ -12,16 +12,10 @@ function resizeGame() {
         unityContainer.style.cssText = "height:100%; width:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;"
     }
 
-    const screenRatio = document.documentElement.clientWidth / document.documentElement.clientHeight;
-
     if (gameRatio > 1) {
         canvas.style.cssText = maxWidth;
     } else {
-            canvas.style.cssText = maxHeight;
-        // if (screenRatio > 1) {
-        // } else {
-        //     canvas.style.cssText = fullscreen;
-        // }
+        canvas.style.cssText = maxHeight;
     }
 }
 

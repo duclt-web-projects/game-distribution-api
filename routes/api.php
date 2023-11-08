@@ -42,6 +42,7 @@ Route::group(['prefix' => 'games'], function () {
     Route::get('featured-list', 'GameController@featuredList');
     Route::get('promo-feature', 'GameController@promoFeature');
     Route::get('promo-list', 'GameController@promoList');
+    Route::get('category/{slug}', 'GameController@gamesByCategory');
 });
 
 Route::group(['prefix' => 'game'], function () {

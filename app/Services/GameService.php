@@ -338,4 +338,19 @@ class GameService extends BaseService
 
         return $comment;
     }
+
+    public function gamesByCategory(string $slug)
+    {
+        $category = DB::table('categories')->where('slug', $slug)->first();
+
+        if(!$category) {
+            return response()->json(['message' => "Category is not found"], 404);
+        }
+
+        $games = $this->model->whereHas('categories', function (Builder $query) use ($category){
+            $query->where('categories.id', $category->id);
+        })->get();
+
+        return $games;
+    }
 }
