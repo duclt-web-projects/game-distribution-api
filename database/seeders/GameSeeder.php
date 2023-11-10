@@ -36,16 +36,17 @@ class GameSeeder extends Seeder
                 'width' => $game->width,
                 'height' => $game->height,
                 'play_times' => rand(10, 1000),
-                'is_hot' => rand(0, 1),
+                'is_hot' => $game->is_hot,
+                'is_banner' => $game->is_banner,
                 'type' => 'javascript',
                 'sub_type' => 'webgl',
-                'source_link' => 'games/' . $game->file_game . '/index.html',
+                'source_link' => $game->source_link,
                 'description' => $game->description,
-                'thumbnail' => pare_url_file($game->avatar),
-                'video' => 'video/' . $game->video,
+                'thumbnail' => $game->thumbnail,
+                'video' => $game->video ? 'video/' . $game->video : null,
                 'published_at' => $this->randomDate($startDate, $endData),
-                'created_at' =>  $this->randomDate($startDate, $endData),
-                'updated_at' =>  $this->randomDate($startDate, $endData),
+                'created_at' => $this->randomDate($startDate, $endData),
+                'updated_at' => $this->randomDate($startDate, $endData),
             ];
         }
         DB::table('games')->insert($data);

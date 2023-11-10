@@ -54,7 +54,7 @@ class GameService extends BaseService
     {
         $game = $this->model->with([
             'categories' => function ($query) {
-                return $query->select(['category_games.id', 'name', 'slug'])->where('category_games.status', 1);
+                return $query->select(['categories.id', 'name', 'slug'])->where('category_games.status', 1);
             },
             'tags' => function ($query) {
                 return $query->select(['game_tags.id', 'name', 'slug'])->where('game_tags.status', 1);
@@ -70,6 +70,8 @@ class GameService extends BaseService
         $gameData = [
             'name' => $data['name'],
             'author_id' => auth()->user()->id ?? 1,
+            'status' => GameConst::ACCEPTED,
+            'published_at' => now(),
             'created_at' => now(),
             'updated_at' => now(),
         ];
