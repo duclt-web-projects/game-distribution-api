@@ -46,6 +46,7 @@ Route::group(['prefix' => 'games'], function () {
 });
 
 Route::group(['prefix' => 'game'], function () {
+    Route::get('{id}/play-times', 'GameController@increasePlayTimes');
     Route::get('{id}', 'GameController@detail');
 
     Route::get('{id}/comments', 'GameController@listComments');

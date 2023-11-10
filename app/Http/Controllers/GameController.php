@@ -147,4 +147,9 @@ class GameController extends BaseController
     {
         return $this->service->gamesByCategory($slug);
     }
+
+    public function increasePlayTimes(string $id)
+    {
+        return $this->service->increasePlayTimes($id);
+    }
 }

@@ -57,7 +57,7 @@ class GameService extends BaseService
                 return $query->select(['categories.id', 'name', 'slug'])->where('category_games.status', 1);
             },
             'tags' => function ($query) {
-                return $query->select(['game_tags.id', 'name', 'slug'])->where('game_tags.status', 1);
+                return $query->select(['tags.id', 'name', 'slug'])->where('game_tags.status', 1);
             }])->find($id);
 
         if (!$game) return null;
@@ -354,5 +354,18 @@ class GameService extends BaseService
         })->get();
 
         return $games;
+    }
+
+    public function increasePlayTimes(string $id)
+    {
+        $game = $this->model->find($id);
+
+        if (!$game) {
+            return response()->json(['message' => "Not found"], 404);
+        }
+
+        $game->fill(['play_times' => ++$game->play_times])->save();
+
+        return $game;
     }
 }
