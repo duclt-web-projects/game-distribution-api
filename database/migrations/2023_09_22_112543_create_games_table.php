@@ -16,6 +16,7 @@ class CreateGamesTable extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('name_vi');
             $table->string('slug')->nullable();
             $table->tinyInteger('status')->default(0)->index();
             $table->tinyInteger('active')->default(1)->index();
@@ -27,6 +28,9 @@ class CreateGamesTable extends Migration
             $table->tinyInteger('is_hot')->default(0);
             $table->tinyInteger('is_banner')->default(0);
             $table->text('description')->nullable();
+            $table->text('description_vi')->nullable();
+            $table->text('instruction')->nullable();
+            $table->text('instruction_vi')->nullable();
             $table->text('reason')->nullable();
             $table->string('type')->nullable();
             $table->string('sub_type')->nullable();

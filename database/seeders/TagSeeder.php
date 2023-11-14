@@ -27,6 +27,7 @@ class TagSeeder extends Seeder
         foreach ($tags as $tag) {
             $data[] = [
                 'name' => $tag,
+                'name_vi' => $tag,
                 'slug' => Str::slug($tag),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),

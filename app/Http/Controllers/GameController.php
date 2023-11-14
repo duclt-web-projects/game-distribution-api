@@ -14,7 +14,7 @@ class GameController extends BaseController
         'active' => GameConst::ACTIVE,
     ];
 
-    private $baseCol = ['id', 'name', 'slug', 'thumbnail'];
+    private $baseCol = ['id', 'name', 'name_vi', 'slug', 'thumbnail'];
 
     public function __construct(GameService $gamesService)
     {

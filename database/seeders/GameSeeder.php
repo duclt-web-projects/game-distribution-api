@@ -30,6 +30,7 @@ class GameSeeder extends Seeder
             $data[] = [
                 'id' => $key + 1,
                 'name' => $game->name,
+                'name_vi' => $game->name,
                 'slug' => Str::slug($game->name) . '-' . ($key + 1),
                 'status' => GameConst::ACCEPTED,
                 'active' => GameConst::ACTIVE,
@@ -42,6 +43,9 @@ class GameSeeder extends Seeder
                 'sub_type' => 'webgl',
                 'source_link' => $game->source_link,
                 'description' => $game->description,
+                'description_vi' => $game->description,
+                'instruction' => $game->description,
+                'instruction_vi' => $game->description,
                 'thumbnail' => $game->thumbnail,
                 'video' => $game->video ? 'video/' . $game->video : null,
                 'published_at' => $this->randomDate($startDate, $endData),

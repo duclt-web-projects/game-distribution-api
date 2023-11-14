@@ -27,6 +27,7 @@ class CategorySeeder extends Seeder
         foreach ($categories as $category) {
             $data[] = [
                 'name' => $category['label'],
+                'name_vi' => $category['label_vi'],
                 'slug' => Str::slug($category['label']),
                 'icon' => $category['icon'],
                 'created_at' => Carbon::now(),
